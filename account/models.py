@@ -1,14 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 from .managers import UserManager
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=20, unique=True)
-    fullname = models.CharField(max_length=100)
-
-    date_joined = models.DateTimeField(auto_now_add=True)
+    fullname = models.CharField(max_length=100, blank=True)
+    balance = models.FloatField(default=0.0)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=True)
@@ -19,15 +18,6 @@ class User(AbstractBaseUser):
     REQUIRED_FIELDS = []
 
     objects = UserManager()
-
-
-    def has_perm(self, perm, obj=None):
-        return True
-    
-
-    def has_module_perms(app_label):
-        return True
-
 
     def __str__(self):
         return self.username
