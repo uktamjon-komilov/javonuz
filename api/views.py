@@ -1,14 +1,14 @@
-from category.models import Category
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 from rest_framework.viewsets import ModelViewSet
 
-from .serializers import CategorySerializer, UserSerializer
+from .serializers import BookSerializer, CategorySerializer, UserSerializer
 from .permissions import UpdateOwnUserProfile, SuperUserOnly
 
 from account.models import User
 from category.models import Category
+from library.models import Book
 
 
 class UserLoginApiView(ObtainAuthToken):
@@ -32,3 +32,21 @@ class CategoryViewSet(ModelViewSet):
     permission_classes = (SuperUserOnly, )
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
+
+
+class BookViewSet(ModelViewSet):
+    """
+    View to list books
+    """
+    serializer_class = BookSerializer
+    queryset = Book.objects.all()
+
+
+    def get_queryset(self):
+        params = self.request.query_params
+
+        if "category_id" in params:
+            category_id = params["category_id"]
+            return self.queryset.filter(category__id=category_id)
+
+        return self.queryset

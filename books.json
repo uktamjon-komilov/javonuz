@@ -1,0 +1,32 @@
+[
+  {
+    "model": "library.book",
+    "pk": 1,
+    "fields": {
+      "title": "Harry Potter and the Philosopher's Stone",
+      "author": "J. K. Rowling",
+      "pages": 223,
+      "chapter": 1,
+      "description": "Harry Potter, an eleven-year-old orphan, discovers that he is a wizard and is invited to study at Hogwarts. Even as he escapes a dreary life and enters a world of magic, he finds trouble awaiting him.\r\nThe book was first published in the United Kingdom on 26 June 1997 by Bloomsbury. It was published in the United States the following year by Scholastic Corporation under the title Harry Potter and the Sorcerer's Stone. It won most of the British book awards that were judged by children and other awards in the US. The book reached the top of the New York Times list of best-selling fiction in August 1999 and stayed near the top of that list for much of 1999 and 2000. It has been translated into at least 73 other languages, and has been made into a feature-length film of the same name, as have all six of its sequels.",
+      "price": 164670.2,
+      "stock": 20.0,
+      "content_file": "",
+      "category": 1
+    }
+  },
+  {
+    "model": "library.book",
+    "pk": 2,
+    "fields": {
+      "title": "Harry Potter and the Cursed Child",
+      "author": "J. K. Rowling",
+      "pages": 336,
+      "chapter": 2,
+      "description": "Harry Potter and the Cursed Child is a 2016 British two-part play written by Jack Thorne based on an original story by J. K. Rowling, John Tiffany, and Thorne. Previews of the play began at the Palace Theatre, London, on 7 June 2016, and it premiered on 30 July 2016. The play opened on Broadway on 21 April 2018 at the Lyric Theatre, with previews starting on 16 March 2018. Its cast is similar to that of the first year in the West End, with returning actors Anthony Boyle, Sam Clemmett, Noma Dumezweni, Poppy Miller, Jamie Parker, Alex Price, and Paul Thornley.\r\n\r\nThe story begins nineteen years after the events of the 2007 novel Harry Potter and the Deathly Hallows and follows Harry Potter, now Head of the Department of Magical Law Enforcement at the Ministry of Magic, and his younger son, Albus Severus Potter, who is about to attend Hogwarts School of Witchcraft and Wizardry. The play is marketed as the eighth story in the Harry Potter series.",
+      "price": 100000.0,
+      "stock": 0.0,
+      "content_file": "",
+      "category": 1
+    }
+  }
+]

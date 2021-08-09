@@ -8,8 +8,9 @@ from .views import *
 
 
 router = DefaultRouter()
-router.register("user", UserViewSet, basename="user")
-router.register("category", CategoryViewSet, basename="category")
+router.register("users", UserViewSet, basename="user")
+router.register("categories", CategoryViewSet, basename="category")
+router.register("books", BookViewSet, basename="book")
 
 
 urlpatterns = [
