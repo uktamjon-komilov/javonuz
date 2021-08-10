@@ -3,6 +3,9 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 
 from .serializers import BookSerializer, CategorySerializer, UserSerializer
 from .permissions import UpdateOwnUserProfile, SuperUserOnly
@@ -26,6 +29,30 @@ class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
+    def create(self, request, *args, **kwargs):
+        """Creates a new user and returns a token for authentication"""
+        data = request.data
+        response = {
+            "status": False,
+            "message": "",
+            "data": {}
+        }
+
+        users = User.objects.filter(username=data["username"])
+        if users.exists():
+            response["message"] = "Bu telefon raqam orqali avval ro'yhatdan o'tilgan!"
+            return Response(response, status=201)
+
+        user = User.objects.create_user(username=data["username"], password=data["password"])
+        token, created = Token.objects.get_or_create(user=user)
+
+        response["status"] = True
+        response["message"] = "Tabriklaymiz! Siz muvaffaqiyatli tarzda ro'yhatdan o'tdingiz!"
+        response["data"]["username"] = data["username"]
+        response["data"]["token"] = token.key
+
+        return Response(response, status=201)
+
 
 class CategoryViewSet(ModelViewSet):
     """
@@ -35,6 +62,34 @@ class CategoryViewSet(ModelViewSet):
     authentication_classes = [TokenAuthentication]
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
+
+
+    @action(detail=False, methods=["get"])
+    def audiobooks(self, request):
+        categories = Category.objects.filter(category_type="audiobooks")
+        
+        page = self.paginate_queryset(categories)
+
+        if page is not None:
+            serializer = CategorySerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serialized_categories = CategorySerializer(categories, many=True)
+        return Response(data=serialized_categories.data)
+    
+
+    @action(detail=False, methods=["get"])
+    def readables(self, request):
+        categories = Category.objects.filter(category_type="readables")
+
+        page = self.paginate_queryset(categories)
+
+        if page is not None:
+            serializer = CategorySerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serialized_categories = CategorySerializer(categories, many=True)
+        return Response(data=serialized_categories.data)
 
 
 class BookViewSet(ModelViewSet):
@@ -54,4 +109,4 @@ class BookViewSet(ModelViewSet):
             category_id = params["category_id"]
             return self.queryset.filter(category__id=category_id)
 
-        return self.queryset
+        return self.queryset        

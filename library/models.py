@@ -1,10 +1,11 @@
-from library.utils import get_audio_path, get_book_path
+from library.utils import get_audio_path, get_book_path, get_thumbnail_path
 from category.models import Category
 from django.db import models
 
 
 class Book(models.Model):
     title = models.CharField(max_length=255)
+    thumbnail = models.ImageField(upload_to=get_thumbnail_path, null=True)
     author = models.CharField(max_length=255)
     pages = models.PositiveIntegerField()
     chapter = models.PositiveIntegerField(default=1)
@@ -21,6 +22,7 @@ class Book(models.Model):
 
 class PaperBack(models.Model):
     book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name="paper_back")
+    thumbnail = models.ImageField(upload_to=get_thumbnail_path, null=True)
     price = models.FloatField(default=0.0)
     stock = models.FloatField(default=0.0)
 
@@ -30,6 +32,7 @@ class PaperBack(models.Model):
 
 class AudioBook(models.Model):
     book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name="audio_book")
+    thumbnail = models.ImageField(upload_to=get_thumbnail_path, null=True)
     price = models.FloatField(default=0.0)
     stock = models.FloatField(default=0.0)
 

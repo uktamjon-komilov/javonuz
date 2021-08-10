@@ -42,7 +42,7 @@ class CategorySerializer(ModelSerializer):
 class PaperBackSerializer(ModelSerializer):
     class Meta:
         model = PaperBack
-        fields = ["price", "stock"]
+        fields = ["price", "stock", "thumbnail"]
 
 
 class AudioFileSerializer(ModelSerializer):
@@ -56,13 +56,13 @@ class AudioBookSerializer(ModelSerializer):
 
     class Meta:
         model = AudioBook
-        fields = ["price", "stock", "files"]
+        fields = ["price", "stock", "thumbnail", "files"]
 
 
 class CategorySerializer(ModelSerializer):
     class Meta:
         model = Category
-        fields = ["id", "name"]
+        fields = ["id", "name", "category_type"]
 
 
 class BookSerializer(ModelSerializer):
@@ -72,4 +72,4 @@ class BookSerializer(ModelSerializer):
 
     class Meta:
         model = Book
-        fields = ["id", "title", "author", "category", "pages", "chapter", "description", "price", "stock", "paper_back", "audio_book"]
+        fields = ["id", "title", "thumbnail", "author", "category", "pages", "chapter", "description", "price", "stock", "content_file", "paper_back", "audio_book"]
