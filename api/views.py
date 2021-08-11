@@ -1,4 +1,4 @@
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 from rest_framework.viewsets import ModelViewSet
@@ -25,7 +25,7 @@ class UserViewSet(ModelViewSet):
     View to create, update, delete users in the system.
     """
     permission_classes = (UpdateOwnUserProfile,)
-    authentication_classes = []
+    authentication_classes = [SessionAuthentication]
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
@@ -44,11 +44,15 @@ class UserViewSet(ModelViewSet):
             return Response(response, status=201)
 
         user = User.objects.create_user(username=data["username"], password=data["password"])
+        user.fullname = data["fullname"]
+        user.save()
         token, created = Token.objects.get_or_create(user=user)
 
         response["status"] = True
         response["message"] = "Tabriklaymiz! Siz muvaffaqiyatli tarzda ro'yhatdan o'tdingiz!"
-        response["data"]["username"] = data["username"]
+        response["data"]["username"] = user.username
+        response["data"]["fullname"] = user.fullname
+        response["data"]["balance"] = user.balance
         response["data"]["token"] = token.key
 
         return Response(response, status=201)
@@ -59,7 +63,7 @@ class CategoryViewSet(ModelViewSet):
     View to list categories
     """
     permission_classes = (SuperUserOnly, IsAuthenticatedOrReadOnly)
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
 
@@ -97,7 +101,7 @@ class BookViewSet(ModelViewSet):
     View to list books
     """
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
     serializer_class = BookSerializer
     queryset = Book.objects.all()
 
@@ -109,4 +113,11 @@ class BookViewSet(ModelViewSet):
             category_id = params["category_id"]
             return self.queryset.filter(category__id=category_id)
 
-        return self.queryset        
+        return self.queryset
+
+
+class CartViewSet(ModelViewSet):
+    """
+    View to list carts
+    """
+    

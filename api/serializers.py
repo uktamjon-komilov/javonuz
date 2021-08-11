@@ -1,6 +1,6 @@
-from rest_framework.fields import Field
+from cart.models import Cart
 from library.models import AudioBook, AudioFile, Book, PaperBack
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from account.models import User
 from category.models import Category
@@ -11,25 +11,39 @@ class UserSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "password"]
+        fields = ["id", "fullname", "username", "password", "balance"]
         extra_kwargs = {
             "password": {
                 "write_only": True,
                 "style": {
                     "input_type": "password"
                 }
+            },
+            "balance": {
+                "read_only": True,
             }
         }
     
 
     def create(self, validated_data):
-        """Create and return a new user"""
+        """Create and return a new user account"""
         user = User.objects.create_user(
             username=validated_data["username"],
             password=validated_data["password"]
         )
 
         return user
+    
+
+    def update(self, instance, validated_data):
+        """Update and return a user's account"""
+
+        if "password" in validated_data:
+            password = validated_data.pop("password")
+            instance.set_password(password)
+        
+        return super().update(instance, validated_data)
+
 
 
 class CategorySerializer(ModelSerializer):
@@ -60,9 +74,14 @@ class AudioBookSerializer(ModelSerializer):
 
 
 class CategorySerializer(ModelSerializer):
+    content_count = SerializerMethodField()
+
     class Meta:
         model = Category
-        fields = ["id", "name", "category_type"]
+        fields = ["id", "name", "category_type", "content_count"]
+    
+    def get_content_count(self, obj):
+        return Book.objects.filter(category=obj).count()
 
 
 class BookSerializer(ModelSerializer):
@@ -73,3 +92,9 @@ class BookSerializer(ModelSerializer):
     class Meta:
         model = Book
         fields = ["id", "title", "thumbnail", "author", "category", "pages", "chapter", "description", "price", "stock", "content_file", "paper_back", "audio_book"]
+
+
+class CartSerializer(ModelSerializer):
+    class Meta:
+        model = Cart
+        fields = []
